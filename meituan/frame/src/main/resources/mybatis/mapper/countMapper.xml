@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.frame.count.mapper.CountMapper">
+	<!-- 添加语句 -->
+	<insert id="addCount">
+		INSERT INTO `count`(id,number,name,age,sex,birth,place,city)
+		VALUES(#{id},#{number},#{name},#{age},#{sex},#{birth},#{place},#{city})
+	</insert>
+		
+	<!-- 查询语句-->
+	<select id="selectCount" resultType="com.along.entity.Count">
+		SELECT id,number,name,age,sex,birth,place,city
+		FROM count
+		<where>
+			
+			<if test="find == 'sure' and name != ''"> and name=#{name}</if>
+			<if test="find == 'dim'  and name != ''"> and name like '%${name}%'</if>
+			<if test="dates0 != null and dates1 != null"> 
+				and birth &gt;= #{dates0} and birth &lt;= #{dates1} 
+			</if>
+			<if test="sex != '' and sex != null">and sex=#{sex}</if>
+			<if test="ageend != 0"> and age &gt;= #{agestart} and age &lt;= #{ageend}</if>
+			
+			<if test="checkedCities != null and checkedCities.length > 0">
+				and city in
+				<foreach item="city1" collection="checkedCities"
+				  open="(" separator="," close=")">
+				    #{city1}
+				</foreach> 
+			</if>
+		</where>
+		limit ${pageNo}, ${pageSize}
+	</select>
+	
+	<!-- 查询记录数-->
+	<select id="selectCountTotal" resultType="java.lang.Integer">
+		SELECT count(*)
+		FROM count
+		<where>
+			
+			<if test="find == 'sure' and name != ''"> and name=#{name}</if>
+			<if test="find == 'dim'  and name != ''"> and name like '%${name}%'</if>
+			<if test="dates0 != null and dates1 != null"> 
+				and birth &gt;= #{dates0} and birth &lt;= #{dates1} 
+			</if>
+			<if test="sex != '' and sex != null">and sex=#{sex}</if>
+			<if test="ageend != 0"> and age &gt;= #{agestart} and age &lt;= #{ageend}</if>
+			
+			<if test="checkedCities != null and checkedCities.length > 0">
+				and city in
+				<foreach item="city1" collection="checkedCities"
+				  open="(" separator="," close=")">
+				    #{city1}
+				</foreach> 
+			</if>
+		</where>
+	</select>
+	
+
+	<!-- 修改 -->
+	<update id="updateCount">
+		UPDATE count
+		<set>
+			<if test="number != null">number=#{number},</if>
+			<if test="name != null">name=#{name},</if>
+			<if test="age != 0">age=#{age},</if>
+			<if test="sex != null">sex=#{sex},</if>
+			<if test="place != null">place=#{place},</if>
+			<if test="birth != null">birth=#{birth},</if>
+			<if test="city != null">city=#{city},</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="deleteCount">
+		DELETE FROM count  WHERE id = #{id}
+	</delete>
+</mapper>
